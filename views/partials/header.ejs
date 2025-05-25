@@ -1,0 +1,23 @@
+<header>
+    <div class="container">
+        <a href="/" class="logo">BookShop</a>
+        <nav>
+            <ul>
+                <% if (user) { %>
+                    <li><a href="/books">Каталог</a></li>
+                    <% if (user.role === 'buyer') { %>
+                        <li><a href="/cart">Корзина</a></li>
+                        <li><a href="/orders">Мои заказы</a></li>
+                    <% } %>
+                    <% if (user.role === 'admin') { %>
+                        <li><a href="/orders/all">Все заказы</a></li>
+                    <% } %>
+                    <li><a href="/logout">Выйти</a></li>
+                <% } else { %>
+                    <li><a href="/login">Вход</a></li>
+                    <li><a href="/register">Регистрация</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+</header>

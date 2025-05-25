@@ -1,73 +1,145 @@
+/* Reset & box-sizing */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+}
+
+/* Тело страницы */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 0 15px;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
 }
-h1 {
-    color: #4d2774;
+
+/* Navbar */
+header {
+    background: #563a88;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-ul {
-    list-style-type: none;
-    padding: 0;
+header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-li {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 10px;
-}
-a, button {
+header .logo {
     color: #fff;
-    background: #7a47c5;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 3px;
+    font-size: 1.8rem;
     text-decoration: none;
-    margin-right: 7px;
-    cursor: pointer;
+    font-weight: bold;
 }
-a:hover, button:hover {
-    background: #563a88;
+header nav ul {
+    list-style: none;
+    display: flex;
 }
-form {
-    display: inline;
+header nav li {
+    margin-left: 20px;
 }
-.menu {
-    background: #563a88;
+header nav a {
     color: #fff;
-    padding: 10px;
-    border-radius: 0 0 8px 8px;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background .2s;
+}
+header nav a:hover {
+    background: #7a47c5;
+}
+
+/* Контейнер контента */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+/* Заголовки */
+h1, h2 {
+    color: #4d2774;
     margin-bottom: 20px;
 }
-.menu a {
-    color: #fff;
-    margin-right: 10px;
-    text-decoration: underline;
+
+/* Поиск */
+.search-bar {
+    margin-bottom: 20px;
 }
-input[type="text"], input[type="number"], input[type="password"], textarea, select {
-    padding: 6px;
-    border-radius: 4px;
+.search-bar input {
+    width: 100%;
+    padding: 10px;
     border: 1px solid #ccc;
-    margin-bottom: 6px;
-    width: 250px;
-    box-sizing: border-box;
-}
-li.book-item {
-    transition: background 0.2s;
-}
-li.book-item:hover {
-    background: #e2e6fa;
-}
-form.add-to-cart {
-    display: inline;
-}
-.success-flash {
-    color: #155724;
-    background: #d4edda;
-    padding: 8px 12px;
     border-radius: 4px;
+}
+
+/* Сетка книг */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Карточка книги */
+.book-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+.book-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+.book-info {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.book-info h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+.book-info .author {
+    color: #666;
+    margin-bottom: 10px;
+    flex: 1;
+}
+.book-info .price {
+    font-weight: bold;
     margin-bottom: 15px;
+}
+.book-info .actions {
+    display: flex;
+    gap: 10px;
+}
+.book-info button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    background: #563a88;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s;
+}
+.book-info button:hover {
+    background: #7a47c5;
+}
+
+/* Flash */
+.success-flash {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #d4edda;
+    color: #155724;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: none;
+    z-index: 1000;
 }

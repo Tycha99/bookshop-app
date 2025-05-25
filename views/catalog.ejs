@@ -2,83 +2,90 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Каталог книг</title>
+    <title>Каталог — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
-<div class="menu">
-    <% if (user) { %>
-        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-        <a href="/logout">Выйти</a>
-        | <a href="/">Главная</a>
-        | <a href="/books">Каталог</a>
-        <% if (user.role === 'buyer') { %>
-            | <a href="/cart">Корзина</a>
-            | <a href="/orders">Мои заказы</a>
-        <% } %>
-        <% if (user.role === 'admin') { %>
-            | <a href="/orders/all">Все заказы</a>
-        <% } %>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
 
-<% } else { %>
-        <a href="/login">Вход</a> |
-        <a href="/register">Регистрация</a> |
-        <a href="/books">Каталог</a>
+<main class="container">
+    <h1>Каталог книг</h1>
+
+    <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
+        <p><a href="/books/add" class="btn">Добавить книгу</a></p>
     <% } %>
-</div>
 
-<h1>Каталог книг</h1>
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Поиск книг...">
+    </div>
 
-<% if (user && (user.role === 'admin' || user.role === 'seller')) { %>
-    <a href="/books/add">Добавить книгу</a>
-<% } %>
+    <div class="book-grid">
+        <% books.forEach(function(b) { %>
+            <div class="book-card">
+                <!-- Здесь можно вставить реальный путь к обложке -->
+                <img src="/images/default-book.jpg" alt="<%= b.title %>">
+                <div class="book-info">
+                    <h3><%= b.title %></h3>
+                    <div class="author"><%= b.author %></div>
+                    <div class="price"><%= b.price %> ₽</div>
+                    <div class="actions">
+                        <% if (user && user.role === 'buyer') { %>
+                            <button class="add-btn" data-id="<%= b.id %>">В корзину</button>
+                        <% } %>
+                        <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
+                            <form action="/books/delete/<%= b.id %>" method="post" style="display:inline;">
+                                <button type="submit">Удалить</button>
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</main>
 
-<!-- Flash для успешного добавления -->
 <div class="success-flash" id="success-flash">Книга добавлена в корзину!</div>
-
-<!-- Поиск по книгам (jQuery) -->
-<input type="text" id="search" placeholder="Поиск по названию книги..." style="width: 250px; padding: 5px; margin: 20px 0;">
-
-<% if (books && books.length > 0) { %>
-    <ul>
-        <% books.forEach(function(book) { %>
-            <li class="book-item">
-                <strong><%= book.title %></strong> — <%= book.author %> — <%= book.price %> руб.
-                <% if (user && user.role === 'buyer') { %>
-                    <form class="add-to-cart" action="/cart/add" method="post" style="display:inline">
-                        <input type="hidden" name="bookId" value="<%= book.id %>">
-                        <button type="submit">В корзину</button>
-                    </form>
-                <% } %>
-            </li>
-        <% }) %>
-    </ul>
-<% } else { %>
-    <p>Книг пока нет.</p>
-<% } %>
 
 <script>
     $(function(){
-        // Плавный поиск
+        var role = $('body').data('role');
+        var isBuyer = (role === 'buyer');
+
+        // AJAX-поиск
         $('#search').on('input', function() {
-            var val = $(this).val().toLowerCase();
-            $('ul li').each(function() {
-                var text = $(this).text().toLowerCase();
-                if(text.indexOf(val) !== -1) {
-                    $(this).fadeIn(150);
+            var q = $(this).val();
+            $.get('/books/search', { q: q }, function(list) {
+                var html = '';
+                if (list.length) {
+                    for (var i = 0; i < list.length; i++) {
+                        var b = list[i];
+                        html += '<div class="book-card">'
+                            +   '<img src="/images/default-book.jpg" alt="' + b.title + '">'
+                            +   '<div class="book-info">'
+                            +     '<h3>' + b.title + '</h3>'
+                            +     '<div class="author">' + b.author + '</div>'
+                            +     '<div class="price">' + b.price + ' ₽</div>'
+                            +     '<div class="actions">';
+                        if (isBuyer) {
+                            html += '<button class="add-btn" data-id="' + b.id + '">В корзину</button>';
+                        }
+                        html +=       '</div>'
+                            +   '</div>'
+                            + '</div>';
+                    }
                 } else {
-                    $(this).fadeOut(150);
+                    html = '<p>Ничего не найдено</p>';
                 }
+                $('.book-grid').html(html);
             });
         });
 
-        // AJAX добавление в корзину + flash
-        $('form.add-to-cart').on('submit', function(e){
-            e.preventDefault();
-            var form = $(this);
-            $.post(form.attr('action'), form.serialize(), function(){
-                $('#success-flash').fadeIn(200).delay(800).fadeOut(400);
+        // AJAX добавление в корзину
+        $('body').on('click', '.add-btn', function() {
+            var btn = $(this);
+            $.post('/cart/add', { bookId: btn.data('id') }, function(){
+                $('#success-flash').fadeIn(200).delay(1000).fadeOut(400);
             });
         });
     });

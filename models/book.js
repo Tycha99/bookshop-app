@@ -13,10 +13,30 @@ async function addBook(title, author, price, description) {
     return result.insertId;
 }
 
+async function deleteBook(id) {
+    // Удаляем книгу по id
+    await pool.query('DELETE FROM books WHERE id = ?', [id]);
+}
 
 async function getBooksByIds(ids) {
     if (ids.length === 0) return [[], []];
     const placeholders = ids.map(() => '?').join(',');
     return pool.query(`SELECT * FROM books WHERE id IN (${placeholders})`, ids);
 }
-module.exports = { getAllBooks, addBook, getBooksByIds };
+
+async function searchBooksByTitle(query) {
+    const like = `%${query}%`;
+    const [rows] = await pool.query(
+        'SELECT * FROM books WHERE title LIKE ?',
+        [like]
+    );
+    return rows;
+}
+
+module.exports = {
+    getAllBooks,
+    addBook,
+    deleteBook,
+    getBooksByIds,
+    searchBooksByTitle
+};

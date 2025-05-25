@@ -7,22 +7,52 @@
 </head>
 <body>
 <div class="menu">
-    Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-    <a href="/logout">Выйти</a>
-    | <a href="/">Главная</a>
-    | <a href="/books">Каталог</a>
-    | <a href="/orders/all">Все заказы</a>
+    <% if (user) { %>
+        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
+        <a href="/logout">Выйти</a> |
+        <a href="/">Главная</a> |
+        <a href="/books">Каталог</a> |
+        <a href="/orders/all">Все заказы</a>
+    <% } else { %>
+        <a href="/login">Вход</a> |
+        <a href="/register">Регистрация</a>
+    <% } %>
 </div>
+
 <h1>Все заказы</h1>
-<% if (orders && orders.length > 0) { %>
+
+<% if (orders.length > 0) { %>
     <ul>
-        <% orders.forEach(function(order) { %>
-            <li>
-                Заказ №<%= order.id %>, пользователь: <%= order.username %>,
-                создан: <%= order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at %>,
-                книг: <%= order.total_items %>
+        <% orders.forEach(function(o) { %>
+            <li style="margin-bottom:10px;">
+                №<%= o.id %>, <%= o.username %>, <%= o.created_at.toLocaleString
+                        ? o.created_at.toLocaleString()
+                        : o.created_at %>, книг: <%= o.total_items %>, статус: <b><%= o.status %></b>
+
+                <% if (o.status === 'open') { %>
+                    <!-- Кнопка отмены -->
+                    <form action="/orders/all/cancel/<%= o.id %>" method="post" style="display:inline;">
+                        <button style="background:#e74c3c; color:#fff; border:none; padding:4px 8px; margin-left:10px;">
+                            Отменить
+                        </button>
+                    </form>
+                    <!-- Кнопка завершения -->
+                    <form action="/orders/all/complete/<%= o.id %>" method="post" style="display:inline;">
+                        <button style="background:#28a745; color:#fff; border:none; padding:4px 8px; margin-left:5px;">
+                            Завершить
+                        </button>
+                    </form>
+                <% } else if (o.status === 'cancelled') { %>
+                    <button disabled style="background:#aaa; color:#fff; border:none; padding:4px 8px; margin-left:10px;">
+                        Отменён
+                    </button>
+                <% } else if (o.status === 'completed') { %>
+                    <button disabled style="background:#888; color:#fff; border:none; padding:4px 8px; margin-left:10px;">
+                        Завершён
+                    </button>
+                <% } %>
             </li>
-        <% }) %>
+        <% }); %>
     </ul>
 <% } else { %>
     <p>Заказов пока нет.</p>

@@ -4,47 +4,43 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const authRouter  = require('./routes/auth');
+const booksRouter = require('./routes/books');
+const cartRouter  = require('./routes/cart');
+const ordersRouter= require('./routes/orders');
+const mainRouter  = require('./routes/index');
 
-// EJS setup
+const app = express();
+
+//  — EJS-шаблоны и статика
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Static files (CSS, JS, картинки)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Body parsers
+//  — Парсеры
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Session setup (сессии обязательны для авторизации, корзины и ролей)
+//  — Сессии
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'secret',
+    secret: process.env.SESSION_SECRET||'secret',
     resave: false,
     saveUninitialized: false
 }));
 
-// Middleware: делаем user доступным во всех views (res.locals.user)
+//  — Доступ к user во всех шаблонах
 app.use((req, res, next) => {
     res.locals.user = req.session.user;
     next();
 });
 
-// ===== Подключение маршрутов =====
-const booksRouter = require('./routes/books');
-const authRouter = require('./routes/auth');
-const cartRouter = require('./routes/cart');
-const ordersRouter = require('./routes/orders');
-const mainRouter = require('./routes/index'); // Можно использовать для /, /test-db и т.д.
+//  — Подключаем роуты
+app.use('/',      authRouter);    // /login, /register, /logout
+app.use('/books', booksRouter);   // /books, /books/add, /books/search, /books/delete/:id
+app.use('/cart',  cartRouter);    // /cart, /cart/add, /cart/checkout, /cart/remove
+app.use('/orders',ordersRouter);  // <-- здесь должна быть ваша логика GET /orders и др.
+app.use('/',      mainRouter);    // / (главная), /test-db
 
-app.use('/', authRouter);      // /login, /register, /logout
-app.use('/books', booksRouter); // /books, /books/add
-app.use('/cart', cartRouter);   // /cart, /cart/add, /cart/checkout
-app.use('/orders', ordersRouter); // /orders
-app.use('/', mainRouter);      // / (главная), /test-db
-
-// ===== Запуск сервера =====
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+//  — Запуск
+const PORT = process.env.PORT||3000;
+app.listen(PORT, ()=> console.log(`Server running at http://localhost:${PORT}`));
