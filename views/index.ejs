@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+    <meta charset="UTF-8">
+    <title>Главная страница — Книжный магазин</title>
+</head>
+    <body>
+    <% if (user) { %>
+        <p>Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) | <a href="/logout">Выйти</a></p>
+    <% } else { %>
+        <p><a href="/login">Вход</a> | <a href="/register">Регистрация</a></p>
+    <% } %>
+    <h1>Добро пожаловать в Книжный магазин!</h1>
+    <p>Приложение работает. Это главная страница (views/index.ejs).</p>
+    </body>
+
+</html>
