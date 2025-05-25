@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои заказы</title>
+</head>
+<body>
+<% if (user) { %>
+    <p>
+        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
+        <a href="/logout">Выйти</a>
+        | <a href="/">Главная</a>
+        | <a href="/books">Каталог</a>
+        <% if (user.role === 'buyer') { %>
+            | <a href="/cart">Корзина</a>
+            | <a href="/orders">Мои заказы</a>
+        <% } %>
+    </p>
+<% } else { %>
+    <p>
+        <a href="/login">Вход</a> |
+        <a href="/register">Регистрация</a> |
+        <a href="/books">Каталог</a>
+    </p>
+<% } %>
+
+<h1>Мои заказы</h1>
+<% if (orders && orders.length > 0) { %>
+    <ul>
+        <% orders.forEach(function(order) { %>
+            <li>
+                Заказ №<%= order.id %>,
+                создан: <%= order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at %>,
+                книг: <%= order.total_items %>
+                | <a href="/orders/<%= order.id %>">Подробнее</a>
+            </li>
+        <% }) %>
+    </ul>
+<% } else { %>
+    <p>У вас пока нет заказов.</p>
+<% } %>
+<a href="/books">В каталог</a>
+</body>
+</html>

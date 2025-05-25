@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="ru">
-    <head>
+<head>
     <meta charset="UTF-8">
     <title>Главная страница — Книжный магазин</title>
 </head>
-    <body>
-    <% if (user) { %>
-        <p>Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) | <a href="/logout">Выйти</a></p>
-    <% } else { %>
-        <p><a href="/login">Вход</a> | <a href="/register">Регистрация</a></p>
-    <% } %>
-    <h1>Добро пожаловать в Книжный магазин!</h1>
-    <p>Приложение работает. Это главная страница (views/index.ejs).</p>
-    </body>
-
+<body>
+<% if (user) { %>
+    <p>
+        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
+        <a href="/logout">Выйти</a>
+        <% if (user.role === 'buyer') { %> | <a href="/cart">Корзина</a><% } %>
+        | <a href="/books">Каталог</a>
+        | <a href="/orders">Мои заказы</a>
+    </p>
+<% } else { %>
+    <p>
+        <a href="/login">Вход</a> |
+        <a href="/register">Регистрация</a> |
+        <a href="/books">Каталог</a>
+    </p>
+<% } %>
+<h1>Добро пожаловать в Книжный магазин!</h1>
+</body>
 </html>

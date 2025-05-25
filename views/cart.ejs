@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+</head>
+<body>
+<h1>Ваша корзина</h1>
+<% if (books && books.length > 0) { %>
+    <ul>
+        <% books.forEach(function(book) { %>
+            <li>
+                <strong><%= book.title %></strong> — <%= book.author %> — <%= book.price %> руб. × <%= book.quantity %>
+            </li>
+        <% }) %>
+    </ul>
+    <form action="/cart/checkout" method="post">
+        <button type="submit">Оформить заказ</button>
+    </form>
+<% } else { %>
+    <p>Корзина пуста.</p>
+<% } %>
+<a href="/books">Продолжить покупки</a>
+</body>
+</html>

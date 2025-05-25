@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить книгу</title>
+</head>
+<body>
+<h1>Добавить книгу</h1>
+<% if (error) { %>
+    <p style="color:red"><%= error %></p>
+<% } %>
+<form action="/books/add" method="post">
+    <input type="text" name="title" placeholder="Название" required><br>
+    <input type="text" name="author" placeholder="Автор" required><br>
+    <input type="number" step="0.01" name="price" placeholder="Цена" required><br>
+    <textarea name="description" placeholder="Описание"></textarea><br>
+    <button type="submit">Добавить</button>
+</form>
+<a href="/books">Назад к каталогу</a>
+</body>
+</html>

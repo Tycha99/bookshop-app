@@ -5,18 +5,48 @@
     <title>Каталог книг</title>
 </head>
 <body>
+<% if (user) { %>
+    <p>
+        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
+        <a href="/logout">Выйти</a>
+        <% if (user.role === 'buyer') { %> | <a href="/cart">Корзина</a><% } %>
+        | <a href="/">Главная</a>
+        | <a href="/orders">Мои заказы</a>
+    </p>
+<% } else { %>
+    <p>
+        <a href="/login">Вход</a> |
+        <a href="/register">Регистрация</a> |
+        <a href="/">Главная</a>
+    </p>
+<% } %>
+
 <h1>Каталог книг</h1>
+
+<% if (user && (user.role === 'admin' || user.role === 'seller')) { %>
+    <a href="/books/add">Добавить книгу</a>
+<% } %>
+
 <% if (books && books.length > 0) { %>
     <ul>
         <% books.forEach(function(book) { %>
             <li>
                 <strong><%= book.title %></strong> — <%= book.author %> — <%= book.price %> руб.
+                <% if (user && user.role === 'buyer') { %>
+                    <form action="/cart/add" method="post" style="display:inline">
+                        <input type="hidden" name="bookId" value="<%= book.id %>">
+                        <button type="submit">В корзину</button>
+                    </form>
+                <% } %>
             </li>
         <% }) %>
     </ul>
 <% } else { %>
     <p>Книг пока нет.</p>
 <% } %>
-<a href="/">На главную</a>
+<% if (user && user.role === 'buyer') { %>
+    | <a href="/orders">Мои заказы</a>
+<% } %>
+
 </body>
 </html>
