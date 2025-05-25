@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Каталог книг</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<% if (user) { %>
-    <p>
+<div class="menu">
+    <% if (user) { %>
         Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
         <a href="/logout">Выйти</a>
-        <% if (user.role === 'buyer') { %> | <a href="/cart">Корзина</a><% } %>
         | <a href="/">Главная</a>
-        | <a href="/orders">Мои заказы</a>
-    </p>
-<% } else { %>
-    <p>
+        | <a href="/books">Каталог</a>
+        <% if (user.role === 'buyer') { %>
+            | <a href="/cart">Корзина</a>
+            | <a href="/orders">Мои заказы</a>
+        <% } %>
+    <% } else { %>
         <a href="/login">Вход</a> |
         <a href="/register">Регистрация</a> |
-        <a href="/">Главная</a>
-    </p>
-<% } %>
+        <a href="/books">Каталог</a>
+    <% } %>
+</div>
 
 <h1>Каталог книг</h1>
 
@@ -27,13 +30,19 @@
     <a href="/books/add">Добавить книгу</a>
 <% } %>
 
+<!-- Flash для успешного добавления -->
+<div class="success-flash" id="success-flash">Книга добавлена в корзину!</div>
+
+<!-- Поиск по книгам (jQuery) -->
+<input type="text" id="search" placeholder="Поиск по названию книги..." style="width: 250px; padding: 5px; margin: 20px 0;">
+
 <% if (books && books.length > 0) { %>
     <ul>
         <% books.forEach(function(book) { %>
-            <li>
+            <li class="book-item">
                 <strong><%= book.title %></strong> — <%= book.author %> — <%= book.price %> руб.
                 <% if (user && user.role === 'buyer') { %>
-                    <form action="/cart/add" method="post" style="display:inline">
+                    <form class="add-to-cart" action="/cart/add" method="post" style="display:inline">
                         <input type="hidden" name="bookId" value="<%= book.id %>">
                         <button type="submit">В корзину</button>
                     </form>
@@ -44,9 +53,31 @@
 <% } else { %>
     <p>Книг пока нет.</p>
 <% } %>
-<% if (user && user.role === 'buyer') { %>
-    | <a href="/orders">Мои заказы</a>
-<% } %>
 
+<script>
+    $(function(){
+        // Плавный поиск
+        $('#search').on('input', function() {
+            var val = $(this).val().toLowerCase();
+            $('ul li').each(function() {
+                var text = $(this).text().toLowerCase();
+                if(text.indexOf(val) !== -1) {
+                    $(this).fadeIn(150);
+                } else {
+                    $(this).fadeOut(150);
+                }
+            });
+        });
+
+        // AJAX добавление в корзину + flash
+        $('form.add-to-cart').on('submit', function(e){
+            e.preventDefault();
+            var form = $(this);
+            $.post(form.attr('action'), form.serialize(), function(){
+                $('#success-flash').fadeIn(200).delay(800).fadeOut(400);
+            });
+        });
+    });
+</script>
 </body>
 </html>

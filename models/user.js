@@ -18,7 +18,9 @@ async function createUser(username, password, role = 'buyer') {
 async function validatePassword(username, password) {
     const user = await findByUsername(username);
     if (!user) return false;
-    return bcrypt.compare(password, user.password) ? user : false;
+    const valid = await bcrypt.compare(password, user.password);
+    return valid ? user : false;
 }
+
 
 module.exports = { findByUsername, createUser, validatePassword };

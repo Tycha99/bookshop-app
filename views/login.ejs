@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Вход</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+<div class="menu">
+    <% if (user) { %>
+        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
+        <a href="/logout">Выйти</a>
+        | <a href="/">Главная</a>
+        | <a href="/books">Каталог</a>
+        <% if (user.role === 'buyer') { %>
+            | <a href="/cart">Корзина</a>
+            | <a href="/orders">Мои заказы</a>
+        <% } %>
+    <% } else { %>
+        <a href="/login">Вход</a> |
+        <a href="/register">Регистрация</a> |
+        <a href="/books">Каталог</a>
+    <% } %>
+</div>
 <h1>Вход</h1>
 <% if (error) { %><p style="color:red"><%= error %></p><% } %>
 <form action="/login" method="post">

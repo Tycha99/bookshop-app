@@ -14,7 +14,10 @@ router.post('/add', requireAuth, async (req, res) => {
     } else {
         req.session.cart.push({ bookId, quantity: 1 });
     }
-    res.redirect('/cart');
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.sendStatus(200);
+    }
+    res.redirect('/cart')
 });
 
 // Показать корзину
@@ -53,6 +56,12 @@ router.post('/checkout', requireAuth, async (req, res) => {
     } catch (err) {
         res.status(500).send('Ошибка при оформлении заказа: ' + err.message);
     }
+});
+// Удалить одну позицию из корзины
+router.post('/remove', requireAuth, (req, res) => {
+    const bookId = parseInt(req.body.bookId);
+    req.session.cart = (req.session.cart || []).filter(item => item.bookId !== bookId);
+    res.redirect('/cart');
 });
 
 module.exports = router;
