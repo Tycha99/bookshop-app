@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Все заказы (админ)</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="menu">
+    Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
+    <a href="/logout">Выйти</a>
+    | <a href="/">Главная</a>
+    | <a href="/books">Каталог</a>
+    | <a href="/orders/all">Все заказы</a>
+</div>
+<h1>Все заказы</h1>
+<% if (orders && orders.length > 0) { %>
+    <ul>
+        <% orders.forEach(function(order) { %>
+            <li>
+                Заказ №<%= order.id %>, пользователь: <%= order.username %>,
+                создан: <%= order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at %>,
+                книг: <%= order.total_items %>
+            </li>
+        <% }) %>
+    </ul>
+<% } else { %>
+    <p>Заказов пока нет.</p>
+<% } %>
+</body>
+</html>

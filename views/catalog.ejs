@@ -17,7 +17,11 @@
             | <a href="/cart">Корзина</a>
             | <a href="/orders">Мои заказы</a>
         <% } %>
-    <% } else { %>
+        <% if (user.role === 'admin') { %>
+            | <a href="/orders/all">Все заказы</a>
+        <% } %>
+
+<% } else { %>
         <a href="/login">Вход</a> |
         <a href="/register">Регистрация</a> |
         <a href="/books">Каталог</a>
