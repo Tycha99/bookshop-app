@@ -2,60 +2,45 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Все заказы (админ)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все заказы — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<div class="menu">
-    <% if (user) { %>
-        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-        <a href="/logout">Выйти</a> |
-        <a href="/">Главная</a> |
-        <a href="/books">Каталог</a> |
-        <a href="/orders/all">Все заказы</a>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1>Все заказы</h1>
+
+    <% if (orders && orders.length > 0) { %>
+        <div class="orders-grid">
+            <% orders.forEach(function(o) { %>
+                <div class="order-card">
+                    <div class="order-card-header">
+                        Заказ №<%= o.id %>
+                    </div>
+                    <div class="order-card-body">
+                        <p><strong>Пользователь:</strong> <%= o.username %></p>
+                        <p><strong>Дата:</strong> <%= o.created_at.toLocaleString ? o.created_at.toLocaleString() : o.created_at %></p>
+                        <p><strong>Книг:</strong> <%= o.total_items %></p>
+                        <p><strong>Статус:</strong> <span class="status status-<%= o.status %>"><%= o.status %></span></p>
+                    </div>
+                    <div class="order-card-actions">
+                        <% if (o.status === 'open') { %>
+                            <form action="/orders/all/cancel/<%= o.id %>" method="post">
+                                <button class="btn btn-danger">Отменить</button>
+                            </form>
+                            <form action="/orders/all/complete/<%= o.id %>" method="post">
+                                <button class="btn btn-success">Завершить</button>
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
     <% } else { %>
-        <a href="/login">Вход</a> |
-        <a href="/register">Регистрация</a>
+        <p>Заказов пока нет.</p>
     <% } %>
-</div>
-
-<h1>Все заказы</h1>
-
-<% if (orders.length > 0) { %>
-    <ul>
-        <% orders.forEach(function(o) { %>
-            <li style="margin-bottom:10px;">
-                №<%= o.id %>, <%= o.username %>, <%= o.created_at.toLocaleString
-                        ? o.created_at.toLocaleString()
-                        : o.created_at %>, книг: <%= o.total_items %>, статус: <b><%= o.status %></b>
-
-                <% if (o.status === 'open') { %>
-                    <!-- Кнопка отмены -->
-                    <form action="/orders/all/cancel/<%= o.id %>" method="post" style="display:inline;">
-                        <button style="background:#e74c3c; color:#fff; border:none; padding:4px 8px; margin-left:10px;">
-                            Отменить
-                        </button>
-                    </form>
-                    <!-- Кнопка завершения -->
-                    <form action="/orders/all/complete/<%= o.id %>" method="post" style="display:inline;">
-                        <button style="background:#28a745; color:#fff; border:none; padding:4px 8px; margin-left:5px;">
-                            Завершить
-                        </button>
-                    </form>
-                <% } else if (o.status === 'cancelled') { %>
-                    <button disabled style="background:#aaa; color:#fff; border:none; padding:4px 8px; margin-left:10px;">
-                        Отменён
-                    </button>
-                <% } else if (o.status === 'completed') { %>
-                    <button disabled style="background:#888; color:#fff; border:none; padding:4px 8px; margin-left:10px;">
-                        Завершён
-                    </button>
-                <% } %>
-            </li>
-        <% }); %>
-    </ul>
-<% } else { %>
-    <p>Заказов пока нет.</p>
-<% } %>
+</main>
 </body>
 </html>

@@ -2,45 +2,38 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Мои заказы</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заказы — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<div class="menu">
-    <% if (user) { %>
-        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-        <a href="/logout">Выйти</a>
-        | <a href="/">Главная</a>
-        | <a href="/books">Каталог</a>
-        <% if (user.role === 'buyer') { %>
-            | <a href="/cart">Корзина</a>
-            | <a href="/orders">Мои заказы</a>
-        <% } %>
-        <% if (user.role === 'admin') { %>
-            | <a href="/orders/all">Все заказы</a>
-        <% } %>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
 
-<% } else { %>
-        <a href="/login">Вход</a> |
-        <a href="/register">Регистрация</a> |
-        <a href="/books">Каталог</a>
+<main class="container">
+    <h1>Мои заказы</h1>
+
+    <% if (orders && orders.length > 0) { %>
+        <div class="orders-grid">
+            <% orders.forEach(function(o) { %>
+                <div class="order-card">
+                    <div class="order-header">
+                        <h3>Заказ №<%= o.id %></h3>
+                        <span class="order-date"><%= o.created_at.toLocaleString ? o.created_at.toLocaleString() : o.created_at %></span>
+                    </div>
+                    <div class="order-details">
+                        <p>Книг: <strong><%= o.total_items %></strong></p>
+                    </div>
+                    <div class="order-actions">
+                        <a href="/orders/<%= o.id %>" class="btn btn-primary">Подробнее</a>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p>У вас пока нет заказов.</p>
     <% } %>
-</div>
-<h1>Мои заказы</h1>
-<% if (orders && orders.length > 0) { %>
-    <ul>
-        <% orders.forEach(function(order) { %>
-            <li>
-                Заказ №<%= order.id %>,
-                создан: <%= order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at %>,
-                книг: <%= order.total_items %>
-                | <a href="/orders/<%= order.id %>">Подробнее</a>
-            </li>
-        <% }) %>
-    </ul>
-<% } else { %>
-    <p>У вас пока нет заказов.</p>
-<% } %>
-<a href="/books">В каталог</a>
+
+    <p><a href="/books" class="btn btn-link">← В каталог</a></p>
+</main>
 </body>
 </html>

@@ -2,40 +2,41 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Детали заказа</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали заказа №<%= order.id %> — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<div class="menu">
-    <% if (user) { %>
-        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-        <a href="/logout">Выйти</a>
-        | <a href="/">Главная</a>
-        | <a href="/books">Каталог</a>
-        <% if (user.role === 'buyer') { %>
-            | <a href="/cart">Корзина</a>
-            | <a href="/orders">Мои заказы</a>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
+
+<main class="container">
+    <div class="order-details-card">
+        <div class="order-header">
+            <h1>Детали заказа №<%= order.id %></h1>
+            <span class="order-date">Дата создания: <%= order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at %></span>
+        </div>
+        <h2>Книги в заказе:</h2>
+
+        <% if (items && items.length > 0) { %>
+            <ul class="order-items-list">
+                <% items.forEach(function(item) { %>
+                    <li class="order-item">
+                        <div class="order-item-info">
+                            <h3><%= item.title %></h3>
+                            <p class="author"><%= item.author %></p>
+                            <p class="price">Цена: <%= item.price %> ₽ × <%= item.quantity %> = <%= (item.price * item.quantity).toFixed(2) %> ₽</p>
+                        </div>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p>В заказе нет книг.</p>
         <% } %>
-    <% } else { %>
-        <a href="/login">Вход</a> |
-        <a href="/register">Регистрация</a> |
-        <a href="/books">Каталог</a>
-    <% } %>
-</div>
-<h1>Детали заказа №<%= order.id %></h1>
-<p>Дата создания: <%= order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at %></p>
-<h2>Книги в заказе:</h2>
-<% if (items && items.length > 0) { %>
-    <ul>
-        <% items.forEach(function(item) { %>
-            <li>
-                <strong><%= item.title %></strong> — <%= item.author %> — <%= item.price %> руб. × <%= item.quantity %>
-            </li>
-        <% }) %>
-    </ul>
-<% } else { %>
-    <p>В заказе нет книг.</p>
-<% } %>
-<a href="/orders">Назад к заказам</a>
+
+        <div class="order-back">
+            <a href="/orders" class="btn btn-link">← Назад к заказам</a>
+        </div>
+    </div>
+</main>
 </body>
 </html>

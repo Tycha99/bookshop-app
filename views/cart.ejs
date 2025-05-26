@@ -2,49 +2,51 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Корзина</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваша корзина — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
-<div class="menu">
-    <% if (user) { %>
-        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-        <a href="/logout">Выйти</a>
-        | <a href="/">Главная</a>
-        | <a href="/books">Каталог</a>
-        <% if (user.role === 'buyer') { %>
-            | <a href="/cart">Корзина</a>
-            | <a href="/orders">Мои заказы</a>
-        <% } %>
-        <% if (user.role === 'admin') { %>
-            | <a href="/orders/all">Все заказы</a>
-        <% } %>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
 
-<% } else { %>
-        <a href="/login">Вход</a> |
-        <a href="/register">Регистрация</a> |
-        <a href="/books">Каталог</a>
+<main class="container">
+    <h1>Ваша корзина</h1>
+
+    <% if (books && books.length > 0) { %>
+        <div class="cart-grid">
+            <% books.forEach(function(book) { %>
+                <div class="cart-card">
+                    <!-- Изображение книги, при наличии -->
+                    <img src="/images/default-book.jpg" alt="<%= book.title %>" class="cart-card-img">
+                    <div class="cart-card-body">
+                        <h3 class="cart-card-title"><%= book.title %></h3>
+                        <p class="cart-card-author"><%= book.author %></p>
+                        <p class="cart-card-price">Цена: <%= book.price %> ₽ × <%= book.quantity %> = <%= (book.price * book.quantity).toFixed(2) %> ₽</p>
+                        <div class="cart-card-actions">
+                            <form action="/cart/remove" method="post">
+                                <input type="hidden" name="bookId" value="<%= book.id %>">
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <div class="cart-summary-card">
+            <h2>Итог заказа</h2>
+            <p>Всего позиций: <strong><%= books.reduce((sum, b) => sum + b.quantity, 0) %></strong></p>
+            <p>К оплате: <strong><%= books.reduce((sum, b) => sum + b.price * b.quantity, 0).toFixed(2) %> ₽</strong></p>
+            <form action="/cart/checkout" method="post">
+                <button type="submit" class="btn btn-primary btn-lg">Оформить заказ</button>
+            </form>
+        </div>
+    <% } else { %>
+        <p>Ваша корзина пуста.</p>
     <% } %>
-</div>
-<h1>Ваша корзина</h1>
-<% if (books && books.length > 0) { %>
-    <ul>
-        <% books.forEach(function(book) { %>
-            <li>
-                <strong><%= book.title %></strong> — <%= book.author %> — <%= book.price %> руб. × <%= book.quantity %>
-                <form action="/cart/remove" method="post" style="display:inline;">
-                    <input type="hidden" name="bookId" value="<%= book.id %>">
-                    <button type="submit" style="background: #e74c3c;">Удалить</button>
-                </form>
-            </li>
-        <% }) %>
-    </ul>
-    <form action="/cart/checkout" method="post">
-        <button type="submit">Оформить заказ</button>
-    </form>
-<% } else { %>
-    <p>Корзина пуста.</p>
-<% } %>
-<a href="/books">Продолжить покупки</a>
+
+    <p><a href="/books" class="btn btn-link">← Продолжить покупки</a></p>
+</main>
 </body>
 </html>

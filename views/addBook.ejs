@@ -2,41 +2,51 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Добавить книгу</title>
+    <title>Добавить книгу — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-<div class="menu">
-    <% if (user) { %>
-        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-        <a href="/logout">Выйти</a>
-        | <a href="/">Главная</a>
-        | <a href="/books">Каталог</a>
-        <% if (user.role === 'buyer') { %>
-            | <a href="/cart">Корзина</a>
-            | <a href="/orders">Мои заказы</a>
-        <% } %>
-        <% if (user.role === 'admin') { %>
-            | <a href="/orders/all">Все заказы</a>
-        <% } %>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
 
-<% } else { %>
-        <a href="/login">Вход</a> |
-        <a href="/register">Регистрация</a> |
-        <a href="/books">Каталог</a>
+<main class="container">
+    <h1>Добавить книгу</h1>
+
+    <% if (error) { %>
+        <p class="error"><%= error %></p>
     <% } %>
-</div>
-<h1>Добавить книгу</h1>
-<% if (error) { %>
-    <p style="color:red"><%= error %></p>
-<% } %>
-<form action="/books/add" method="post">
-    <input type="text" name="title" placeholder="Название" required><br>
-    <input type="text" name="author" placeholder="Автор" required><br>
-    <input type="number" step="0.01" name="price" placeholder="Цена" required><br>
-    <textarea name="description" placeholder="Описание"></textarea><br>
-    <button type="submit">Добавить</button>
-</form>
-<a href="/books">Назад к каталогу</a>
+
+    <form action="/books/add" method="post" enctype="multipart/form-data" class="add-form">
+        <div class="form-group">
+            <label for="title">Название</label><br>
+            <input id="title" type="text" name="title" placeholder="Название книги" required>
+        </div>
+
+        <div class="form-group">
+            <label for="author">Автор</label><br>
+            <input id="author" type="text" name="author" placeholder="Автор книги" required>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Цена, ₽</label><br>
+            <input id="price" type="number" step="0.01" name="price" placeholder="Цена, например 499.99" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Описание</label><br>
+            <textarea id="description" name="description" placeholder="Краткое описание"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Обложка книги</label><br>
+            <input id="image" type="file" name="image" accept="image/jpeg,image/png">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Добавить книгу</button>
+    </form>
+
+    <p style="margin-top:20px;">
+        <a href="/books" class="btn btn-link">← Назад к каталогу</a>
+    </p>
+</main>
 </body>
 </html>

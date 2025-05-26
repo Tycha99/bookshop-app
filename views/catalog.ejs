@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -13,7 +14,7 @@
     <h1>Каталог книг</h1>
 
     <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
-        <p><a href="/books/add" class="btn">Добавить книгу</a></p>
+        <p><a href="/books/add" class="btn btn-primary">Добавить книгу</a></p>
     <% } %>
 
     <div class="search-bar">
@@ -21,21 +22,20 @@
     </div>
 
     <div class="book-grid">
-        <% books.forEach(function(b) { %>
+        <% books.forEach(function(book) { %>
             <div class="book-card">
-                <!-- Здесь можно вставить реальный путь к обложке -->
-                <img src="/images/default-book.jpg" alt="<%= b.title %>">
+                <img src="<%= book.image ? '/uploads/' + book.image : '/images/default-book.jpg' %>" alt="<%= book.title %>" class="book-card-img">
                 <div class="book-info">
-                    <h3><%= b.title %></h3>
-                    <div class="author"><%= b.author %></div>
-                    <div class="price"><%= b.price %> ₽</div>
+                    <h3><%= book.title %></h3>
+                    <p class="author"><%= book.author %></p>
+                    <p class="price"><%= book.price %> ₽</p>
                     <div class="actions">
                         <% if (user && user.role === 'buyer') { %>
-                            <button class="add-btn" data-id="<%= b.id %>">В корзину</button>
+                            <button class="btn add-btn" data-id="<%= book.id %>">В корзину</button>
                         <% } %>
                         <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
-                            <form action="/books/delete/<%= b.id %>" method="post" style="display:inline;">
-                                <button type="submit">Удалить</button>
+                            <form action="/books/delete/<%= book.id %>" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Удалить</button>
                             </form>
                         <% } %>
                     </div>
@@ -57,35 +57,35 @@
             var q = $(this).val();
             $.get('/books/search', { q: q }, function(list) {
                 var html = '';
-                if (list.length) {
-                    for (var i = 0; i < list.length; i++) {
-                        var b = list[i];
-                        html += '<div class="book-card">'
-                            +   '<img src="/images/default-book.jpg" alt="' + b.title + '">'
-                            +   '<div class="book-info">'
-                            +     '<h3>' + b.title + '</h3>'
-                            +     '<div class="author">' + b.author + '</div>'
-                            +     '<div class="price">' + b.price + ' ₽</div>'
-                            +     '<div class="actions">';
-                        if (isBuyer) {
-                            html += '<button class="add-btn" data-id="' + b.id + '">В корзину</button>';
-                        }
-                        html +=       '</div>'
-                            +   '</div>'
-                            + '</div>';
+                list.forEach(function(book) {
+                    html += '<div class="book-card">'
+                        +   '<img src="' + (book.image ? '/uploads/' + book.image : '/images/default-book.jpg') + '" alt="' + book.title + '" class="book-card-img">'
+                        +   '<div class="book-info">'
+                        +     '<h3>' + book.title + '</h3>'
+                        +     '<p class="author">' + book.author + '</p>'
+                        +     '<p class="price">' + book.price + ' ₽</p>'
+                        +     '<div class="actions">';
+                    if (isBuyer) {
+                        html += '<button class="btn add-btn" data-id="' + book.id + '">В корзину</button>';
                     }
-                } else {
-                    html = '<p>Ничего не найдено</p>';
-                }
+                    if (role === 'seller' || role === 'admin') {
+                        html += '<form action="/books/delete/' + book.id + '" method="post" style="display:inline;">'
+                            +   '<button type="submit" class="btn btn-danger">Удалить</button>'
+                            + '</form>';
+                    }
+                    html +=     '</div>'
+                        +   '</div>'
+                        + '</div>';
+                });
                 $('.book-grid').html(html);
             });
         });
 
         // AJAX добавление в корзину
         $('body').on('click', '.add-btn', function() {
-            var btn = $(this);
-            $.post('/cart/add', { bookId: btn.data('id') }, function(){
-                $('#success-flash').fadeIn(200).delay(1000).fadeOut(400);
+            var bookId = $(this).data('id');
+            $.post('/cart/add', { bookId: bookId }, function() {
+                $('#success-flash').fadeIn(200).delay(800).fadeOut(400);
             });
         });
     });

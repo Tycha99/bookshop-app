@@ -2,55 +2,25 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <title>Регистрация — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(function(){
-        $('form').on('submit', function(){
-            if ($('input[name="username"]').val().length < 3) {
-                alert('Имя пользователя должно быть не короче 3 символов!');
-                return false;
-            }
-            if ($('input[name="password"]').val().length < 5) {
-                alert('Пароль должен быть не короче 5 символов!');
-                return false;
-            }
-        });
-    });
-</script>
-
-<body>
-<div class="menu">
-    <% if (user) { %>
-        Вы вошли как: <b><%= user.username %></b> (<%= user.role %>) |
-        <a href="/logout">Выйти</a>
-        | <a href="/">Главная</a>
-        | <a href="/books">Каталог</a>
-        <% if (user.role === 'buyer') { %>
-            | <a href="/cart">Корзина</a>
-            | <a href="/orders">Мои заказы</a>
-        <% } %>
-    <% } else { %>
-        <a href="/login">Вход</a> |
-        <a href="/register">Регистрация</a> |
-        <a href="/books">Каталог</a>
-    <% } %>
-</div>
-<h1>Регистрация</h1>
-<% if (error) { %><p style="color:red"><%= error %></p><% } %>
-<form action="/register" method="post">
-    <input type="text" name="username" placeholder="Имя пользователя" required><br>
-    <input type="password" name="password" placeholder="Пароль" required><br>
-    <select name="role">
-        <option value="buyer">Покупатель</option>
-        <option value="seller">Продавец</option>
-        <option value="admin">Администратор</option>
-    </select><br>
-    <button type="submit">Зарегистрироваться</button>
-</form>
-<a href="/login">Вход</a>
+<main class="container">
+    <h1>Регистрация</h1>
+    <% if (error) { %><p class="error"><%= error %></p><% } %>
+    <form action="/register" method="post">
+        <input type="text"  name="username" placeholder="Логин" required><br>
+        <input type="password" name="password" placeholder="Пароль" required><br>
+        <select name="role">
+            <option value="buyer">Покупатель</option>
+            <option value="seller">Продавец</option>
+            <option value="admin">Администратор</option>
+        </select><br>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+</main>
 </body>
 </html>
