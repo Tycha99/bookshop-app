@@ -40,7 +40,7 @@ app.use('/books', booksRouter);   // /books, /books/add, /books/search, /books/d
 app.use('/cart',  cartRouter);    // /cart, /cart/add, /cart/checkout, /cart/remove
 app.use('/orders',ordersRouter);  // <-- здесь должна быть ваша логика GET /orders и др.
 app.use('/',      mainRouter);    // / (главная), /test-db
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //  — Запуск
 const PORT = process.env.PORT||3000;
 app.listen(PORT, ()=> console.log(`Server running at http://localhost:${PORT}`));

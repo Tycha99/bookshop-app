@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои заказы — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -14,26 +13,32 @@
 
     <% if (orders && orders.length > 0) { %>
         <div class="orders-grid">
-            <% orders.forEach(function(o) { %>
+            <% orders.forEach(function(order) { %>
                 <div class="order-card">
-                    <div class="order-header">
-                        <h3>Заказ №<%= o.id %></h3>
-                        <span class="order-date"><%= o.created_at.toLocaleString ? o.created_at.toLocaleString() : o.created_at %></span>
+                    <div class="order-card-header">
+                        Заказ №<%= order.id %>
                     </div>
-                    <div class="order-details">
-                        <p>Книг: <strong><%= o.total_items %></strong></p>
+                    <div class="order-card-body">
+                        <p>Дата: <%= order.created_at.toLocaleString
+                                    ? order.created_at.toLocaleString()
+                                    : order.created_at %></p>
+                        <p>Книг: <%= order.total_items %></p>
                     </div>
-                    <div class="order-actions">
-                        <a href="/orders/<%= o.id %>" class="btn btn-primary">Подробнее</a>
+                    <div class="order-card-actions">
+                        <a href="/orders/<%= order.id %>" class="btn btn-primary">
+                            Подробнее
+                        </a>
                     </div>
                 </div>
-            <% }); %>
+            <% }) %>
         </div>
     <% } else { %>
         <p>У вас пока нет заказов.</p>
     <% } %>
 
-    <p><a href="/books" class="btn btn-link">← В каталог</a></p>
+    <p class="link-back">
+        <a href="/books">← В каталог</a>
+    </p>
 </main>
 </body>
 </html>

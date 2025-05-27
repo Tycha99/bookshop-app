@@ -5,17 +5,24 @@
     <title>Вход — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body data-role="<%= user ? user.role : '' %>">
+<body>
+
 <%- include('partials/header') %>
 
-<main class="container">
+<main class="auth-container">
     <h1>Вход</h1>
-    <% if (error) { %><p class="error"><%= error %></p><% } %>
-    <form action="/login" method="post">
-        <input type="text"  name="username" placeholder="Логин" required><br>
-        <input type="password" name="password" placeholder="Пароль" required><br>
-        <button type="submit">Войти</button>
+    <% if (error) { %>
+        <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/login" method="post" class="auth-form">
+        <input type="text" name="username" placeholder="Имя пользователя" required>
+        <input type="password" name="password" placeholder="Пароль" required>
+        <button type="submit" class="btn btn-primary btn-lg">Войти</button>
     </form>
+    <p class="auth-switch">
+        Ещё нет аккаунта? <a href="/register">Зарегистрироваться</a>
+    </p>
 </main>
+
 </body>
 </html>

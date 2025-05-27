@@ -14,7 +14,9 @@
     <h1>Каталог книг</h1>
 
     <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
-        <p><a href="/books/add" class="btn btn-primary">Добавить книгу</a></p>
+        <a href="/books/add" class="btn btn-primary btn-lg floating-btn">
+            Добавить книгу
+        </a>
     <% } %>
 
     <div class="search-bar">
@@ -23,21 +25,38 @@
 
     <div class="book-grid">
         <% books.forEach(function(book) { %>
-            <div class="book-card">
-                <img src="<%= book.image ? '/uploads/' + book.image : '/images/default-book.jpg' %>" alt="<%= book.title %>" class="book-card-img">
-                <div class="book-info">
-                    <h3><%= book.title %></h3>
-                    <p class="author"><%= book.author %></p>
-                    <p class="price"><%= book.price %> ₽</p>
-                    <div class="actions">
-                        <% if (user && user.role === 'buyer') { %>
-                            <button class="btn add-btn" data-id="<%= book.id %>">В корзину</button>
-                        <% } %>
-                        <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
-                            <form action="/books/delete/<%= book.id %>" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-danger">Удалить</button>
-                            </form>
-                        <% } %>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <!-- лицевая сторона -->
+                    <div class="flip-card-front book-card">
+                        <img
+                                src="<%= book.image ? '/uploads/' + book.image : '/images/default-book.jpg' %>"
+                                alt="<%= book.title %>"
+                                class="book-card-img">
+                        <div class="book-info">
+                            <h3><%= book.title %></h3>
+                            <p class="author"><%= book.author %></p>
+                            <p class="price"><%= book.price %> ₽</p>
+                            <div class="actions">
+                                <% if (user && user.role === 'buyer') { %>
+                                    <button class="btn add-btn" data-id="<%= book.id %>">В корзину</button>
+                                <% } %>
+                                <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
+                                    <form action="/books/delete/<%= book.id %>" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger">Удалить</button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- оборотная сторона -->
+                    <div class="flip-card-back">
+                        <div class="book-back-info">
+                            <h3><%= book.title %></h3>
+                            <p><%= book.description && book.description.trim().length
+                                        ? book.description
+                                        : 'Описание отсутствует.' %></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,44 +68,61 @@
 
 <script>
     $(function(){
-        var role = $('body').data('role');
-        var isBuyer = (role === 'buyer');
+        var role    = $('body').data('role'),
+            isBuyer = (role === 'buyer');
 
         // AJAX-поиск
-        $('#search').on('input', function() {
+        $('#search').on('input', function(){
             var q = $(this).val();
-            $.get('/books/search', { q: q }, function(list) {
+            $.get('/books/search', { q: q }, function(list){
                 var html = '';
-                list.forEach(function(book) {
-                    html += '<div class="book-card">'
-                        +   '<img src="' + (book.image ? '/uploads/' + book.image : '/images/default-book.jpg') + '" alt="' + book.title + '" class="book-card-img">'
-                        +   '<div class="book-info">'
-                        +     '<h3>' + book.title + '</h3>'
-                        +     '<p class="author">' + book.author + '</p>'
-                        +     '<p class="price">' + book.price + ' ₽</p>'
-                        +     '<div class="actions">';
-                    if (isBuyer) {
-                        html += '<button class="btn add-btn" data-id="' + book.id + '">В корзину</button>';
-                    }
-                    if (role === 'seller' || role === 'admin') {
-                        html += '<form action="/books/delete/' + book.id + '" method="post" style="display:inline;">'
-                            +   '<button type="submit" class="btn btn-danger">Удалить</button>'
-                            + '</form>';
-                    }
-                    html +=     '</div>'
-                        +   '</div>'
-                        + '</div>';
+                list.forEach(function(book){
+                    html += `
+              <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front book-card">
+                    <img src="${book.image ? '/uploads/'+book.image : '/images/default-book.jpg'}"
+                         alt="${book.title}" class="book-card-img">
+                    <div class="book-info">
+                      <h3>${book.title}</h3>
+                      <p class="author">${book.author}</p>
+                      <p class="price">${book.price} ₽</p>
+                      <div class="actions">
+                        ${isBuyer
+                        ? `<button class="btn add-btn" data-id="${book.id}">В корзину</button>`
+                        : ''}
+                        ${(role==='seller'||role==='admin')
+                        ? `<form action="/books/delete/${book.id}" method="post" style="display:inline;">
+                               <button type="submit" class="btn btn-danger">Удалить</button>
+                             </form>`
+                        : ''}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flip-card-back">
+                    <div class="book-back-info">
+                      <h3>${book.title}</h3>
+                      <p>${book.description || 'Описание отсутствует.'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
                 });
                 $('.book-grid').html(html);
             });
         });
 
         // AJAX добавление в корзину
-        $('body').on('click', '.add-btn', function() {
+        $('body').on('click', '.add-btn', function(){
             var bookId = $(this).data('id');
-            $.post('/cart/add', { bookId: bookId }, function() {
+            $.post('/cart/add', { bookId: bookId }, function(){
                 $('#success-flash').fadeIn(200).delay(800).fadeOut(400);
             });
+        });
+
+        // Flip-карточки
+        $('body').on('click', '.flip-card', function(){
+            $(this).toggleClass('flipped');
         });
     });
 </script>

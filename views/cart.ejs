@@ -17,16 +17,18 @@
         <div class="cart-grid">
             <% books.forEach(function(book) { %>
                 <div class="cart-card">
-                    <!-- Изображение книги, при наличии -->
-                    <img src="/images/default-book.jpg" alt="<%= book.title %>" class="cart-card-img">
+                    <img
+                            src="<%= book.image ? '/uploads/'+book.image : '/images/default-book.jpg' %>"
+                            alt="<%= book.title %>"
+                            class="cart-item-img">
                     <div class="cart-card-body">
                         <h3 class="cart-card-title"><%= book.title %></h3>
                         <p class="cart-card-author"><%= book.author %></p>
                         <p class="cart-card-price">Цена: <%= book.price %> ₽ × <%= book.quantity %> = <%= (book.price * book.quantity).toFixed(2) %> ₽</p>
                         <div class="cart-card-actions">
-                            <form action="/cart/remove" method="post">
+                            <form action="/cart/remove" method="post" style="display:inline">
                                 <input type="hidden" name="bookId" value="<%= book.id %>">
-                                <button type="submit" class="btn btn-danger">Удалить</button>
+                                <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                             </form>
                         </div>
                     </div>

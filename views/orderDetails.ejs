@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Детали заказа №<%= order.id %> — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -10,32 +9,46 @@
 <%- include('partials/header') %>
 
 <main class="container">
-    <div class="order-details-card">
-        <div class="order-header">
-            <h1>Детали заказа №<%= order.id %></h1>
-            <span class="order-date">Дата создания: <%= order.created_at.toLocaleString ? order.created_at.toLocaleString() : order.created_at %></span>
-        </div>
-        <h2>Книги в заказе:</h2>
+    <h1>Детали заказа №<%= order.id %></h1>
 
-        <% if (items && items.length > 0) { %>
-            <ul class="order-items-list">
-                <% items.forEach(function(item) { %>
-                    <li class="order-item">
-                        <div class="order-item-info">
+    <div class="order-details">
+        <p><strong>Дата создания:</strong>
+            <%= order.created_at.toLocaleString
+                    ? order.created_at.toLocaleString()
+                    : order.created_at %>
+        </p>
+
+        <h2>Книги в заказе:</h2>
+        <% if (items && items.length) { %>
+            <div class="order-items-grid">
+                <% items.forEach(item => { %>
+                    <div class="book-card-mini">
+                        <!-- 1) Тег картинки -->
+                        <img
+                                src="<%= item.image ? '/uploads/' + item.image : '/images/default-book.jpg' %>"
+                                alt="<%= item.title %>"
+                                class="book-mini-img"
+                        >
+                        <div class="book-mini-info">
                             <h3><%= item.title %></h3>
                             <p class="author"><%= item.author %></p>
-                            <p class="price">Цена: <%= item.price %> ₽ × <%= item.quantity %> = <%= (item.price * item.quantity).toFixed(2) %> ₽</p>
+                            <p class="price">
+                                <%= Number(item.price).toFixed(2) %> ₽ × <%= item.quantity %>
+                                = <strong><%= (Number(item.price) * item.quantity).toFixed(2) %> ₽</strong>
+                            </p>
                         </div>
-                    </li>
+                    </div>
                 <% }) %>
-            </ul>
-        <% } else { %>
+            </div>
+
+
+    <% } else { %>
             <p>В заказе нет книг.</p>
         <% } %>
 
-        <div class="order-back">
-            <a href="/orders" class="btn btn-link">← Назад к заказам</a>
-        </div>
+        <p class="link-back">
+            <a href="/orders">&larr; Назад к списку заказов</a>
+        </p>
     </div>
 </main>
 </body>

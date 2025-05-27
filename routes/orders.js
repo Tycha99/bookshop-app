@@ -82,9 +82,13 @@ router.get('/:id', requireAuth, async (req, res) => {
         }
         // Загружаем позиции
         const [items] = await db.query(`
-            SELECT b.title, b.author, b.price, oi.quantity
+            SELECT b.title,
+                   b.author,
+                   b.price,
+                   b.image,
+                   oi.quantity
             FROM order_items oi
-                     JOIN books b ON oi.book_id = b.id
+                     JOIN books b       ON oi.book_id = b.id
             WHERE oi.order_id = ?
         `, [orderId]);
         res.render('orderDetails', { order: orders[0], items });

@@ -5,22 +5,29 @@
     <title>Регистрация — BookShop</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body data-role="<%= user ? user.role : '' %>">
+<body>
+
 <%- include('partials/header') %>
 
-<main class="container">
+<main class="auth-container">
     <h1>Регистрация</h1>
-    <% if (error) { %><p class="error"><%= error %></p><% } %>
-    <form action="/register" method="post">
-        <input type="text"  name="username" placeholder="Логин" required><br>
-        <input type="password" name="password" placeholder="Пароль" required><br>
+    <% if (error) { %>
+        <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/register" method="post" class="auth-form">
+        <input type="text" name="username" placeholder="Имя пользователя" required>
+        <input type="password" name="password" placeholder="Пароль" required>
         <select name="role">
             <option value="buyer">Покупатель</option>
             <option value="seller">Продавец</option>
             <option value="admin">Администратор</option>
-        </select><br>
-        <button type="submit">Зарегистрироваться</button>
+        </select>
+        <button type="submit" class="btn btn-primary btn-lg">Зарегистрироваться</button>
     </form>
+    <p class="auth-switch">
+        Уже есть аккаунт? <a href="/login">Войти</a>
+    </p>
 </main>
+
 </body>
 </html>
