@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление заказами — BookShop</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1>Управление заказами</h1>
+
+    <% if (orders && orders.length > 0) { %>
+        <div class="orders-grid">
+            <% orders.forEach(o => { %>
+                <div class="order-card">
+                    <div class="order-card-header">
+                        Заказ №<%= o.id %>
+                    </div>
+                    <div class="order-card-body">
+                        <p><strong>Пользователь:</strong> <%= o.username %></p>
+                        <p><strong>Дата:</strong> <%= o.created_at.toLocaleString ? o.created_at.toLocaleString() : o.created_at %></p>
+                        <p><strong>Книг:</strong> <%= o.total_items %></p>
+                        <p><strong>Статус:</strong> <span class="status status-<%= o.status %>"><%= o.status %></span></p>
+                    </div>
+                    <div class="order-card-actions">
+                        <form action="/orders/update-status/<%= o.id %>" method="post">
+                            <select name="status" required>
+                                <option disabled selected>Изменить статус</option>
+                                <option value="open">open</option>
+                                <option value="cancelled">cancelled</option>
+                                <option value="completed">completed</option>
+                            </select>
+                            <button class="btn btn-primary" style="margin-left: 10px;">Обновить</button>
+                        </form>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p>Заказов пока нет.</p>
+    <% } %>
+</main>
+</body>
+</html>

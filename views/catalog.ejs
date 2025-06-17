@@ -41,11 +41,16 @@
                                 <% if (user && user.role === 'buyer') { %>
                                     <button class="btn add-btn" data-id="<%= book.id %>">В корзину</button>
                                 <% } %>
-                                <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
-                                    <form action="/books/delete/<%= book.id %>" method="post" style="display:inline;">
-                                        <button type="submit" class="btn btn-danger">Удалить</button>
-                                    </form>
-                                <% } %>
+                                    <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
+                                        <form action="/books/delete/<%= book.id %>" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-danger">Удалить</button>
+                                        </form>
+                                        <a href="/books/price/edit/<%= book.id %>"
+                                           class="btn btn-primary"
+                                           style="margin-left:8px;">
+                                            Изменить
+                                        </a>
+                                    <% } %>
                             </div>
                         </div>
                     </div>

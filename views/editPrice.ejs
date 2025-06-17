@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменить цену — BookShop</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1>Изменить цену книги</h1>
+
+    <form action="/books/price/edit/<%= book.id %>" method="post" class="edit-form">
+        <div class="form-group">
+            <label for="price">Цена, ₽</label><br>
+            <input
+                    id="price"
+                    type="number"
+                    name="price"
+                    step="0.01"
+                    value="<%= book.price %>"
+                    required
+            >
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="/books" class="btn btn-link">Отмена</a>
+    </form>
+</main>
+</body>
+</html>

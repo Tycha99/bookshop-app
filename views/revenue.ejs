@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Выручка — BookShop</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1>Текущая выручка</h1>
+    <p>Суммарная выручка по завершённым заказам: <strong><%= revenue.toFixed(2) %> ₽</strong></p>
+    <p><a href="/orders/manage" class="btn btn-link">← К заказам</a></p>
+</main>
+</body>
+</html>

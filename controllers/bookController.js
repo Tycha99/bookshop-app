@@ -1,6 +1,6 @@
 const Book = require('../models/book');
 const path = require('path');
-
+const db   = require('../models/db');
 // показать форму
 exports.showAddForm = (req, res) => {
     res.render('addBook', { error: null });
@@ -40,5 +40,48 @@ exports.list = async (req, res) => {
         res.render('catalog', { books });
     } catch (err) {
         res.status(500).send('Ошибка при получении списка книг: ' + err.message);
+    }
+};
+// Показать форму редактирования цены
+exports.showEditPrice = async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+        return res.status(400).send('Некорректный ID книги');
+    }
+
+    try {
+        const [rows] = await db.query(
+            'SELECT id, title, price FROM books WHERE id = ?',
+            [id]
+        );
+        if (!rows.length) {
+            return res.status(404).send('Книга не найдена');
+        }
+        res.render('editPrice', { book: rows[0] });
+    } catch (err) {
+        res.status(500).send('Ошибка при загрузке книги: ' + err.message);
+    }
+};
+
+// Сохранить новую цену
+exports.updatePrice = async (req, res) => {
+    const id    = parseInt(req.params.id, 10);
+    const price = parseFloat(req.body.price);
+
+    if (isNaN(id)) {
+        return res.status(400).send('Некорректный ID книги');
+    }
+    if (isNaN(price) || price < 0) {
+        return res.status(400).send('Некорректная цена');
+    }
+
+    try {
+        await db.query(
+            'UPDATE books SET price = ? WHERE id = ?',
+            [price, id]
+        );
+        res.redirect('/books');
+    } catch (err) {
+        res.status(500).send('Ошибка при сохранении цены: ' + err.message);
     }
 };

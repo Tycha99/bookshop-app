@@ -9,6 +9,7 @@ const booksRouter = require('./routes/books');
 const cartRouter  = require('./routes/cart');
 const ordersRouter= require('./routes/orders');
 const mainRouter  = require('./routes/index');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -38,9 +39,17 @@ app.use((req, res, next) => {
 app.use('/',      authRouter);    // /login, /register, /logout
 app.use('/books', booksRouter);   // /books, /books/add, /books/search, /books/delete/:id
 app.use('/cart',  cartRouter);    // /cart, /cart/add, /cart/checkout, /cart/remove
-app.use('/orders',ordersRouter);  // <-- здесь должна быть ваша логика GET /orders и др.
+app.use('/orders',ordersRouter);
+app.use('/users',  usersRouter);
 app.use('/',      mainRouter);    // / (главная), /test-db
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //  — Запуск
-const PORT = process.env.PORT||3000;
-app.listen(PORT, ()=> console.log(`Server running at http://localhost:${PORT}`));
+const PORT = process.env.PORT || 3000;
+
+// 1) создаём HTTP-сервер из Express-приложения
+const server = app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
+
+// 2) экспортируем сам сервер, а не app
+module.exports = server;

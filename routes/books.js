@@ -45,4 +45,19 @@ router.post(
 // Удаление книги (admin и seller)
 router.post('/delete/:id', requireRoles(['admin', 'seller']), bookController.deleteBook);
 
+// Форма редактирования цены (seller, admin)
+router.get(
+    '/price/edit/:id',
+    requireRoles(['admin','seller']),
+    bookController.showEditPrice
+);
+
+// Обработка новой цены
+router.post(
+    '/price/edit/:id',
+    requireRoles(['admin','seller']),
+    bookController.updatePrice
+);
+
+
 module.exports = router;

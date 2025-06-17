@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление пользователями — BookShop</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body data-role="<%= user ? user.role : '' %>">
+<%- include('partials/header') %>
+
+<section class="users-page">
+    <div class="container">
+        <h1>Управление пользователями</h1>
+
+        <div class="users-actions">
+            <a href="/register" class="btn btn-primary">Добавить пользователя</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="users-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Имя</th>
+                    <th>Роль</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% users.forEach(u => { %>
+                    <tr>
+                        <td><%= u.id %></td>
+                        <td><%= u.username %></td>
+                        <td><%= u.role %></td>
+                        <td>
+                            <form action="/users/delete/<%= u.id %>" method="post"
+                                  onsubmit="return confirm('Удалить пользователя «<%= u.username %>»?');">
+                                <button class="btn btn-danger btn-sm">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

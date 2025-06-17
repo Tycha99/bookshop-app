@@ -22,5 +22,23 @@ async function validatePassword(username, password) {
     return valid ? user : false;
 }
 
+// Получить всех пользователей
+async function getAllUsers() {
+    const [rows] = await pool.query(
+        'SELECT id, username, role FROM users ORDER BY id DESC'
+    );
+    return rows;
+}
 
-module.exports = { findByUsername, createUser, validatePassword };
+// Удалить пользователя по ID
+async function deleteUser(id) {
+    return pool.query('DELETE FROM users WHERE id = ?', [id]);
+}
+
+module.exports = {
+    findByUsername,
+    createUser,
+    validatePassword,
+    getAllUsers,
+    deleteUser
+};
